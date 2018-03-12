@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
 const db = new Sequelize('postgres://localhost:5432/wikistack'
-    , { logging: true } );
+    , { logging: false } );
 
 const Page = db.define('page', {
     title: {
@@ -21,8 +21,17 @@ const Page = db.define('page', {
     date: {
         type: Sequelize.DATE,
         defaultValue: Sequelize.NOW,
+    },
+
+},
+    {
+        getterMethods: {
+            wiki() {
+                return `/wiki/${this.urlTitle}`;
+            }
+        }
     }
-});
+);
 
 const User = db.define('user', {
     name: {
