@@ -5,6 +5,7 @@ const app = express();
 const routes = require('./routes');
 const nunjucks = require('nunjucks');
 const env = nunjucks.configure('views', {noCache: true});
+const models = require('./models');
 // const io = require('socket.io');
 app.use(morgan('dev'));
 app.use(bodyparser.urlencoded({extended: false}));
@@ -16,12 +17,10 @@ app.engine('html', nunjucks.render);
 // app.set('view engine', 'html');
 // app.use('/', routes);
 
-
-app.use(function(req, res){
-    res.render('index.html')
-})
-
+app.use(routes);
 
 
 const port = 3000;
-app.listen(port, ()=>{console.log(`http://localhost:${port} Listening on ${port}`)});
+models.db.sync({force: true}).then(()=>{
+    app.listen(port, ()=>console.log(`http://localhost:${port} Listening on ${port}`))
+});
