@@ -23,8 +23,8 @@ app.use('/', routes);
 
 
 const port = 3000;
-models.db.sync().then(()=>{
+models.db.sync({force: true}).then(()=>{
     app.listen(port, ()=>console.log(`http://localhost:${port} Listening on ${port}`))
 });
 
-// {force: true}
+

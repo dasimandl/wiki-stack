@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
 const db = new Sequelize('postgres://localhost:5432/wikistack'
-    , { logging: false } );
+    , { logging: true } );
 
 const Page = db.define('page', {
     title: {
@@ -10,6 +10,7 @@ const Page = db.define('page', {
     urlTitle: {
         type: Sequelize.STRING,
         allowNull: false,
+
     },
     content: {
         type: Sequelize.TEXT,
@@ -22,15 +23,25 @@ const Page = db.define('page', {
         type: Sequelize.DATE,
         defaultValue: Sequelize.NOW,
     },
-
+    wiki: {
+        type: Sequelize.STRING,
+    }
 },
     {
-        getterMethods: {
-            wiki() {
-                return `/wiki/${this.urlTitle}`;
+        // getterMethods: {
+        //     wiki() {
+        //         return `/wiki/${this.urlTitle}`;
+        //     },
+        // },
+        hooks: {
+            beforeValidate(page, options){
+                page.urlTitle = page.title.replace(/\s+/g, '_').replace(/\W/g,'');
+            },
+            afterValidate(page, options) {
+                page.wiki = '/wiki/'+ page.urlTitle
             }
         }
-    }
+    },
 );
 
 const User = db.define('user', {
